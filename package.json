@@ -1,0 +1,40 @@
+{
+  "name": "webpack-tools-build",
+  "version": "0.0.1",
+  "description": "webpack-tools-build",
+  "main": "./lib/index.js",
+  "directories": {
+    "example": "example",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"test success\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:heimeii/webpack-tools-build.git"
+  },
+  "keywords": [
+    "webpack",
+    "build",
+    "tools"
+  ],
+  "author": "heimei",
+  "files": [
+    "bin/",
+    "lib/"
+  ],
+  "engines": {
+    "node": ">= 8"
+  },
+  "license": "ISC",
+  "bin": {
+    "webpack-build-tools": "./bin/index.js",
+    "jjj": "./bin/index.js"
+  },
+  "dependencies": {
+    "webpack": "^4.16.5"
+  },
+  "devDependencies": {}
+}

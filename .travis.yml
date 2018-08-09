@@ -1,0 +1,25 @@
+sudo: false
+language: node_js
+node_js:
+  - "node"
+
+script:
+  - npm test
+
+cache:
+  directories:
+    - "node_modules"
+
+jobs:
+  include:
+    - stage: npm release
+      deploy:
+        provider: npm
+        email: "Huxfjxj@gmail.com"
+        api_key: $NPM_KEY
+        on:
+          tags: true
+
+os:
+  - linux
+  - osx
