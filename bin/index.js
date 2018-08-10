@@ -2,4 +2,8 @@
 
 const args = process.argv.slice(2);
 
-require(`../scripts/${args}`);
+try {
+    require(`../scripts/${args}`);
+} catch (e) {
+    console.log(e);
+}

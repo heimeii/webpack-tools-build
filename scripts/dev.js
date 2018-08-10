@@ -1,20 +1,14 @@
 const webpack = require('webpack');
-const path = require('path');
+const webpackDevConfig = require('../webpack/webpack.dev.conf');
 
-const appDirectory = process.cwd();
+const compiler = webpack(webpackDevConfig);
 
-console.log(path.join(appDirectory, './webpack/index'));
-
-const compiler = webpack({
-    entry: path.join(appDirectory, './webpack/index.js'),
-    output: {
-        path: path.join(appDirectory, './build'),
-        filename: '[name].js'
-    }
+const promise = new Promise((resolve, reject) => {
+    compiler.run((err, stats) => {
+        resolve(stats.toString({
+            colors: true,
+        }));
+    });
 });
 
-compiler.run((err, stats) => {
-    consle.log(stats.toString({
-        colors: true,
-    }));
-});
+promise.then(console.log);
