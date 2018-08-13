@@ -1,18 +1,22 @@
 const path = require('path');
 const paths = require('../utils/paths');
+const vueLoaderConfig = require('../utils/vue-loader.conf');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
-    entry: paths.appEntry,
+    entry: {
+        main: paths.appEntry,
+    },
     output: {
         path: paths.appBuild,
         filename: '[name].js',
     },
     resolve: {
-        extensions: ['.js', '.vue', '.json'],
+        extensions: ['.js', '.mjs', '.vue', '.json'],
         alias: {
             vue$: 'vue/dist/vue.esm.js',
-            '@babel/runtime': path.dirname(require.resolve('@babel/runtime/package.json')),
             '@': paths.resolveApp('src'),
+            '@babel/runtime': path.dirname(require.resolve('@babel/runtime/package.json')),
         },
     },
     module: {
@@ -26,12 +30,10 @@ module.exports = {
                 include: [paths.resolveApp('src')],
                 options: {
                     cache: true,
+                    baseConfig: require(require.resolve('../lib/.eslintrc')),
                     eslintPath: require.resolve('eslint'),
                     formatter: require('eslint-friendly-formatter'),
                     emitWarning: true,
-                    baseConfig: {
-                        extends: [require.resolve('eslint-config-airbnb-base')],
-                    },
                 },
             },
             {
@@ -63,6 +65,11 @@ module.exports = {
                 ],
             },
             {
+                test: /\.vue$/,
+                loader: require.resolve('vue-loader'),
+                options: vueLoaderConfig,
+            },
+            {
                 test: /\.js$/,
                 loader: require.resolve('babel-loader'),
                 include: [paths.resolveApp('src')],
@@ -77,9 +84,29 @@ module.exports = {
                     ],
                 }
             },
-            {}
+            {
+                test: /\.(post)?css$/,
+                use: [
+                    require.resolve('vue-style-loader'),
+                    {
+                        loader: require.resolve('css-loader'),
+                        options: {
+                            importLoaders: 1,
+                        },
+                    },
+                    {
+                        loader: require.resolve('postcss-loader'),
+                        options: {
+                            ...require(require.resolve('../lib/.postcssrc')),
+                        },
+                    },
+                ],
+            },
         ],
     },
+    plugins: [
+        new VueLoaderPlugin(),
+    ],
     node: {
         setImmediate: false,
         dgram: 'empty',
