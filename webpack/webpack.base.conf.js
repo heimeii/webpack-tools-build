@@ -1,4 +1,4 @@
-const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const paths = require('../utils/paths');
 const vueLoaderConfig = require('../utils/vue-loader.conf');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
@@ -9,15 +9,18 @@ module.exports = {
     },
     output: {
         path: paths.appBuild,
-        filename: '[name].js',
+        publicPath: '/',
+        filename: 'static/js/[name].[chunkhash:8].js',
+        chunkFilename: 'static/js/[name].[chunkhash:8].js',
     },
     resolve: {
+        cacheWithContext: true,
         extensions: ['.js', '.mjs', '.vue', '.json'],
         alias: {
             vue$: 'vue/dist/vue.esm.js',
             '@': paths.resolveApp('src'),
-            '@babel/runtime': path.dirname(require.resolve('@babel/runtime/package.json')),
         },
+        modules: [paths.resolveApp('./node_modules'), paths.resolveOwn('./node_modules')],
     },
     module: {
         strictExportPresence: true,
@@ -43,7 +46,7 @@ module.exports = {
                         loader: require.resolve('url-loader'),
                         options: {
                             limit: 10000,
-                            name: paths.resolveBuild('img/[name].[hash:8].[ext]'),
+                            name: 'static/img/[name].[hash:8].[ext]',
                         },
                     },
                     {
@@ -51,7 +54,7 @@ module.exports = {
                         loader: require.resolve('url-loader'),
                         options: {
                             limit: 10000,
-                            name: paths.resolveBuild('media/[name].[hash:8].[ext]'),
+                            name: 'static/media/[name].[hash:8].[ext]',
                         },
                     },
                     {
@@ -59,7 +62,7 @@ module.exports = {
                         loader: require.resolve('url-loader'),
                         options: {
                             limit: 10000,
-                            name: paths.resolveBuild('fonts/[name].[hash:8].[ext]'),
+                            name: 'static/fonts/[name].[hash:8].[ext]',
                         },
                     },
                 ],
@@ -72,26 +75,31 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: require.resolve('babel-loader'),
-                include: [paths.resolveApp('src')],
+                exclude: /node_modules/,
                 options: {
+                    babelrc: false,
+                    compact: false,
                     cacheDirectory: true,
                     highlightCode: true,
                     presets: [
                         require.resolve('@babel/preset-env'),
                     ],
                     plugins: [
-                        require.resolve('@babel/plugin-transform-runtime')
+                        require.resolve('@babel/plugin-transform-runtime'),
                     ],
-                }
+                },
             },
             {
                 test: /\.(post)?css$/,
                 use: [
-                    require.resolve('vue-style-loader'),
+                    process.env.NODE_ENV !== 'production'
+                        ? require.resolve('vue-style-loader')
+                        : MiniCssExtractPlugin.loader,
                     {
                         loader: require.resolve('css-loader'),
                         options: {
                             importLoaders: 1,
+                            sourceMap: true,
                         },
                     },
                     {
@@ -107,12 +115,15 @@ module.exports = {
     plugins: [
         new VueLoaderPlugin(),
     ],
+    watchOptions: {
+        ignored: [paths.resolveApp('node_modules')],
+    },
     node: {
         setImmediate: false,
         dgram: 'empty',
         fs: 'empty',
         net: 'empty',
         tls: 'empty',
-        child_process: 'empty'
-    }
+        child_process: 'empty',
+    },
 };

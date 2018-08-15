@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpackBaseConfig = require('./webpack.base.conf');
-const path = require('path');
 const paths = require('../utils/paths');
 
 module.exports = webpackMerge(webpackBaseConfig, {
@@ -10,27 +9,39 @@ module.exports = webpackMerge(webpackBaseConfig, {
     entry: {
         main: [
             paths.appEntry,
-            require.resolve('webpack-dev-server/client') + '?http://127.0.0.1:8080',
+            require.resolve('webpack-hot-client/client'),
             require.resolve('webpack/hot/dev-server'),
         ],
     },
+    output: {
+        path: paths.appBuild,
+        publicPath: '/',
+        filename: 'static/js/[name].js',
+        chunkFilename: 'static/js/[name].js',
+    },
     devtool: 'cheap-module-source-map',
-    devServer: {
-        contentBase: paths.appBuild,
-        compress: true,
+    serve: {
+        // open: true,
         port: 8080,
         host: '127.0.0.1',
-        historyApiFallback: true,
-        hot: true,
-        hotOnly: true,
-        open: true,
-        overlay: true
+        hotClient: {
+            autoConfigure: false,
+        },
+        logLevel: 'error',
     },
     plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: '"development"',
+            },
+        }),
         new HtmlWebpackPlugin({
             template: paths.resolveOwn('./index.html'),
         }),
     ],
+    optimization: {
+        noEmitOnErrors: true,
+    },
 })

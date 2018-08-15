@@ -1,10 +1,24 @@
-const webpack = require('webpack');
-const webpackDevServer = require('webpack-dev-server');
+const webpackServe = require('webpack-serve');
 const webpackDevConfig = require('../webpack/webpack.dev.conf');
 
-const compiler = webpack(webpackDevConfig);
-const devServer = new webpackDevServer(compiler, webpackDevConfig.devServer);
+webpackServe({}, { config: webpackDevConfig }).then(server => {
+    server.on('listening', ({ server, option }) => {
+        console.log('Starting server on ' + JSON.stringify(option));
+    });
 
-devServer.listen(webpackDevConfig.devServer.port, webpackDevConfig.devServer.host, () => {
-    console.log(`Starting server on http://${webpackDevConfig.devServer.host}:${webpackDevConfig.devServer.port}`);
+    server.on('build-started', ({ stats, compiler }) => {
+        console.log('build-started');
+    });
+
+    server.on('build-finished', ({ stats, compiler }) => {
+        console.log('build-finished');
+    });
+
+    server.on('compiler-error', ({ stats, compiler }) => {
+        console.log('compiler-error');
+    });
+
+    server.on('compiler-warning', ({ stats, compiler }) => {
+        console.log('compiler-warning');
+    });
 });
