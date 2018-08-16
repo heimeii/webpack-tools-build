@@ -3,6 +3,7 @@ const webpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackManifestPlugin = require('webpack-manifest-plugin');
+const OptimizeCssnanoPlugin = require('./plugin/OptimizeCssnanoPlugin');
 const webpackBaseConfig = require('./webpack.base.conf');
 const paths = require('../utils/paths');
 
@@ -37,6 +38,7 @@ module.exports = webpackMerge(webpackBaseConfig, {
             filename: 'static/css/[name].[contenthash:8].css',
             chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
         }),
+        new OptimizeCssnanoPlugin({}),
         new WebpackManifestPlugin({
             fileName: 'manifest.json',
             filter({ name }) {

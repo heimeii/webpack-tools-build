@@ -69,6 +69,5 @@
     "webpack-manifest-plugin": "^2.0.3",
     "webpack-merge": "^4.1.4",
     "webpack-serve": "^2.0.2"
-  },
-  "devDependencies": {}
+  }
 }

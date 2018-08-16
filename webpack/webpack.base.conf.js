@@ -91,23 +91,50 @@ module.exports = {
             },
             {
                 test: /\.(post)?css$/,
-                use: [
-                    process.env.NODE_ENV !== 'production'
-                        ? require.resolve('vue-style-loader')
-                        : MiniCssExtractPlugin.loader,
+                oneOf: [
                     {
-                        loader: require.resolve('css-loader'),
-                        options: {
-                            importLoaders: 1,
-                            sourceMap: true,
-                        },
+                        resourceQuery: /module/,
+                        use: [
+                            process.env.NODE_ENV !== 'production'
+                                ? require.resolve('vue-style-loader')
+                                : MiniCssExtractPlugin.loader,
+                            {
+                                loader: require.resolve('css-loader'),
+                                options: {
+                                    importLoaders: 1,
+                                    sourceMap: true,
+                                    modules: true,
+                                    localIdentName: '[local]_[hash:base64:5]'
+                                },
+                            },
+                            {
+                                loader: require.resolve('postcss-loader'),
+                                options: {
+                                    ...require(require.resolve('../lib/.postcssrc')),
+                                },
+                            },
+                        ],
                     },
                     {
-                        loader: require.resolve('postcss-loader'),
-                        options: {
-                            ...require(require.resolve('../lib/.postcssrc')),
-                        },
-                    },
+                        use: [
+                            process.env.NODE_ENV !== 'production'
+                                ? require.resolve('vue-style-loader')
+                                : MiniCssExtractPlugin.loader,
+                            {
+                                loader: require.resolve('css-loader'),
+                                options: {
+                                    importLoaders: 1,
+                                    sourceMap: true,
+                                },
+                            },
+                            {
+                                loader: require.resolve('postcss-loader'),
+                                options: {
+                                    ...require(require.resolve('../lib/.postcssrc')),
+                                },
+                            },
+                        ],
+                    }
                 ],
             },
         ],
