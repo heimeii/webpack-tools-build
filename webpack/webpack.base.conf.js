@@ -22,20 +22,23 @@ module.exports = {
         },
         modules: [paths.resolveApp('./node_modules'), paths.resolveOwn('./node_modules')],
     },
+    resolveLoader: {
+        modules: [paths.resolveApp('./node_modules'), paths.resolveOwn('./node_modules')],
+    },
     module: {
         strictExportPresence: true,
         rules: [
             { parser: { requireEnsure: false } },
             {
                 test: /\.(js|vue)$/,
-                loader: require.resolve('eslint-loader'),
+                loader: 'eslint-loader',
                 enforce: 'pre',
                 include: [paths.resolveApp('src')],
                 options: {
                     cache: true,
                     baseConfig: require(require.resolve('../lib/.eslintrc')),
-                    eslintPath: require.resolve('eslint'),
-                    formatter: require('eslint-friendly-formatter'),
+                    eslintPath: 'eslint',
+                    formatter: require(require.resolve('eslint-friendly-formatter')),
                     emitWarning: true,
                 },
             },
@@ -43,7 +46,7 @@ module.exports = {
                 oneOf: [
                     {
                         test: /\.(bmp|png|jpe?g|gif|svg)(\?.*)?$/,
-                        loader: require.resolve('url-loader'),
+                        loader: 'url-loader',
                         options: {
                             limit: 10000,
                             name: 'static/img/[name].[hash:8].[ext]',
@@ -51,7 +54,7 @@ module.exports = {
                     },
                     {
                         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-                        loader: require.resolve('url-loader'),
+                        loader: 'url-loader',
                         options: {
                             limit: 10000,
                             name: 'static/media/[name].[hash:8].[ext]',
@@ -59,7 +62,7 @@ module.exports = {
                     },
                     {
                         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-                        loader: require.resolve('url-loader'),
+                        loader: 'url-loader',
                         options: {
                             limit: 10000,
                             name: 'static/fonts/[name].[hash:8].[ext]',
@@ -69,12 +72,12 @@ module.exports = {
             },
             {
                 test: /\.vue$/,
-                loader: require.resolve('vue-loader'),
+                loader: 'vue-loader',
                 options: vueLoaderConfig,
             },
             {
                 test: /\.js$/,
-                loader: require.resolve('babel-loader'),
+                loader: 'babel-loader',
                 exclude: /node_modules/,
                 options: {
                     babelrc: false,
@@ -82,9 +85,10 @@ module.exports = {
                     cacheDirectory: true,
                     highlightCode: true,
                     presets: [
-                        require.resolve('@babel/preset-env'),
+                        [require.resolve('@babel/preset-env'), { modules: false }],
                     ],
                     plugins: [
+                        require.resolve('@babel/plugin-syntax-dynamic-import'),
                         require.resolve('@babel/plugin-transform-runtime'),
                     ],
                 },
@@ -96,10 +100,10 @@ module.exports = {
                         resourceQuery: /module/,
                         use: [
                             process.env.NODE_ENV !== 'production'
-                                ? require.resolve('vue-style-loader')
+                                ? 'vue-style-loader'
                                 : MiniCssExtractPlugin.loader,
                             {
-                                loader: require.resolve('css-loader'),
+                                loader: 'css-loader',
                                 options: {
                                     importLoaders: 1,
                                     sourceMap: true,
@@ -108,7 +112,7 @@ module.exports = {
                                 },
                             },
                             {
-                                loader: require.resolve('postcss-loader'),
+                                loader: 'postcss-loader',
                                 options: {
                                     ...require(require.resolve('../lib/.postcssrc')),
                                 },
@@ -118,17 +122,17 @@ module.exports = {
                     {
                         use: [
                             process.env.NODE_ENV !== 'production'
-                                ? require.resolve('vue-style-loader')
+                                ? 'vue-style-loader'
                                 : MiniCssExtractPlugin.loader,
                             {
-                                loader: require.resolve('css-loader'),
+                                loader: 'css-loader',
                                 options: {
                                     importLoaders: 1,
                                     sourceMap: true,
                                 },
                             },
                             {
-                                loader: require.resolve('postcss-loader'),
+                                loader: 'postcss-loader',
                                 options: {
                                     ...require(require.resolve('../lib/.postcssrc')),
                                 },

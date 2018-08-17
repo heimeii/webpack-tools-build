@@ -2,10 +2,6 @@ const webpackServe = require('webpack-serve');
 const webpackDevConfig = require('../webpack/webpack.dev.conf');
 
 webpackServe({}, { config: webpackDevConfig }).then(server => {
-    server.on('listening', ({ server, option }) => {
-        console.log('Starting server on ' + JSON.stringify(option));
-    });
-
     server.on('build-started', ({ stats, compiler }) => {
         console.log('build-started');
     });

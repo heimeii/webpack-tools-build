@@ -1,11 +1,12 @@
 const postcss = require('postcss');
 const cssnano = require('cssnano');
+const env = require('postcss-preset-env');
 
-class OptimizeCssnanoPlugin {
+class TransfromPostcssPlugin {
     constructor(options) {
         this.options = {
             sourceMap: {
-
+                inline: false,
             },
             cssnanoOptions: {
                 preset: 'advanced',
@@ -15,7 +16,7 @@ class OptimizeCssnanoPlugin {
     }
 
     apply(compiler) {
-        compiler.hooks.emit.tapAsync('OptimizeCssnanoPlugin', (compilation, callback) => {
+        compiler.hooks.emit.tapAsync('TransfromPostcssPlugin', (compilation, callback) => {
             const assetsNames = Object.keys(compilation.assets).filter(assetName => /\.css$/i.test(assetName));
             const promises = [];
             let hasErrors = false;
@@ -45,6 +46,7 @@ class OptimizeCssnanoPlugin {
                     delete compilation.assets[mapName];
                 }
                 const promise = postcss()
+                    .use(env({ stage: 0 }))
                     .use(cssnano(cssnanoOptions))
                     .process(originalCss, postCssOptions)
                     .then((result) => {
@@ -90,4 +92,4 @@ class OptimizeCssnanoPlugin {
     }
 }
 
-module.exports = OptimizeCssnanoPlugin;
+module.exports = TransfromPostcssPlugin;
