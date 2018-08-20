@@ -7,12 +7,13 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const TransfromPostcssPlugin = require('./plugin/TransfromPostcssPlugin');
 const webpackBaseConfig = require('./webpack.base.conf');
+const config = require('../utils/config');
 const paths = require('../utils/paths');
 
 module.exports = webpackMerge(webpackBaseConfig, {
     mode: 'production',
     bail: true,
-    devtool: 'source-map',
+    devtool: 'hidden-source-map',
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
@@ -22,7 +23,7 @@ module.exports = webpackMerge(webpackBaseConfig, {
         new webpack.HashedModuleIdsPlugin(),
         new HtmlWebpackPlugin({
             inject: true,
-            template: paths.resolveOwn('./index.html'),
+            template: config.findTemplateFile || paths.resolveOwn('./index.html'),
             minify: {
                 removeComments: true,
                 collapseWhitespace: true,

@@ -1,4 +1,6 @@
+const os = require('os');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const config = require('../utils/config');
 const paths = require('../utils/paths');
 const vueLoaderConfig = require('../utils/vue-loader.conf');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
@@ -12,6 +14,7 @@ module.exports = {
         publicPath: '/',
         filename: 'static/js/[name].[chunkhash:8].js',
         chunkFilename: 'static/js/[name].[chunkhash:8].js',
+        pathinfo: false,
     },
     resolve: {
         cacheWithContext: true,
@@ -36,8 +39,9 @@ module.exports = {
                 include: [paths.resolveApp('src')],
                 options: {
                     cache: true,
+                    cacheIdentifer: config.findEslintConfigFile,
+                    cwd: paths.appPath,
                     baseConfig: require(require.resolve('../lib/.eslintrc')),
-                    eslintPath: 'eslint',
                     formatter: require(require.resolve('eslint-friendly-formatter')),
                     emitWarning: true,
                 },
@@ -72,13 +76,38 @@ module.exports = {
             },
             {
                 test: /\.vue$/,
-                loader: 'vue-loader',
-                options: vueLoaderConfig,
+                use: [
+                    {
+                        loader: 'vue-loader',
+                        options: vueLoaderConfig,
+                    },
+                    (process.env.NODE_ENV === 'production') && {
+                        loader: 'thread-loader',
+                        options: {
+                            workers: os.cpus().length - 1,
+                        },
+                    },
+                ],
             },
             {
-                test: /\.js$/,
-                loader: 'babel-loader',
+                test: /\.tsx?$/,
                 exclude: /node_modules/,
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            happyPackMode: true,
+                            transpileOnly: true,
+                            appendTsSuffixTo: [/\.vue$/],
+                        },
+                    },
+                ],
+            },
+            {
+                test: /\.(m)?js$/,
+                sideEffects: false,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
                 options: {
                     babelrc: false,
                     compact: false,
@@ -114,7 +143,10 @@ module.exports = {
                             {
                                 loader: 'postcss-loader',
                                 options: {
-                                    ...require(require.resolve('../lib/.postcssrc')),
+                                    config: {
+                                        path: config.findPostcssConfigFile || paths.resolveOwn('./lib/'),
+                                    },
+                                    ctx: {},
                                 },
                             },
                         ],
@@ -146,9 +178,6 @@ module.exports = {
     plugins: [
         new VueLoaderPlugin(),
     ],
-    watchOptions: {
-        ignored: [paths.resolveApp('node_modules')],
-    },
     node: {
         setImmediate: false,
         dgram: 'empty',

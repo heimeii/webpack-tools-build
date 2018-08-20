@@ -1,7 +1,9 @@
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const webpackBaseConfig = require('./webpack.base.conf');
+const config = require('../utils/config');
 const paths = require('../utils/paths');
 
 module.exports = webpackMerge(webpackBaseConfig, {
@@ -29,6 +31,9 @@ module.exports = webpackMerge(webpackBaseConfig, {
         },
         logLevel: 'error',
     },
+    watchOptions: {
+        ignored: [paths.resolveApp('node_modules')],
+    },
     plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
@@ -37,8 +42,9 @@ module.exports = webpackMerge(webpackBaseConfig, {
                 NODE_ENV: '"development"',
             },
         }),
+        new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
         new HtmlWebpackPlugin({
-            template: paths.resolveOwn('./index.html'),
+            template: config.findTemplateFile || paths.resolveOwn('./index.html'),
         }),
     ],
     optimization: {
