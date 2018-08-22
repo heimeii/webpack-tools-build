@@ -1,7 +1,11 @@
 const webpackServe = require('webpack-serve');
-const webpackDevConfig = require('../webpack/webpack.dev.conf');
+const webpackConfig = require('../webpack/webpack.config');
+const configHelper = require('../utils/config');
 
-webpackServe({}, { config: webpackDevConfig }).then(server => {
+const buildConfig = configHelper.buildConfig;
+buildConfig.env = 'dev';
+
+webpackServe({}, { config: configHelper.createConfig(webpackConfig, buildConfig) }).then(server => {
     server.on('build-started', ({ stats, compiler }) => {
         console.log('build-started');
     });

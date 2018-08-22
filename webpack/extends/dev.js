@@ -1,23 +1,19 @@
 const webpack = require('webpack');
-const webpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const webpackBaseConfig = require('./webpack.base.conf');
-const config = require('../utils/config');
-const paths = require('../utils/paths');
+const config = require('../../utils/config');
+const paths = require('../../utils/paths');
 
-module.exports = webpackMerge(webpackBaseConfig, {
+module.exports = {
     mode: 'development',
     entry: {
         main: [
-            paths.appEntry,
+            './src/main.js',
             require.resolve('webpack-hot-client/client'),
             require.resolve('webpack/hot/dev-server'),
         ],
     },
     output: {
-        path: paths.appBuild,
-        publicPath: '/',
         filename: 'static/js/[name].js',
         chunkFilename: 'static/js/[name].js',
     },
@@ -32,16 +28,16 @@ module.exports = webpackMerge(webpackBaseConfig, {
         logLevel: 'error',
     },
     watchOptions: {
-        ignored: [paths.resolveApp('node_modules')],
+        ignored: ['node_modules'],
     },
     plugins: [
-        new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: '"development"',
             },
         }),
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
         new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
         new HtmlWebpackPlugin({
             template: config.findTemplateFile || paths.resolveOwn('./index.html'),
@@ -50,4 +46,4 @@ module.exports = webpackMerge(webpackBaseConfig, {
     optimization: {
         noEmitOnErrors: true,
     },
-})
+};

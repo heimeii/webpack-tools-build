@@ -1,19 +1,19 @@
 const webpack = require('webpack');
-const webpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackManifestPlugin = require('webpack-manifest-plugin');
-const CompressionWebpackPlugin = require('compression-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const TransfromPostcssPlugin = require('./plugin/TransfromPostcssPlugin');
-const webpackBaseConfig = require('./webpack.base.conf');
-const config = require('../utils/config');
-const paths = require('../utils/paths');
+const TransfromPostcssPlugin = require('../plugin/TransfromPostcssPlugin');
+const config = require('../../utils/config');
+const paths = require('../../utils/paths');
 
-module.exports = webpackMerge(webpackBaseConfig, {
+module.exports = {
     mode: 'production',
     bail: true,
     devtool: 'hidden-source-map',
+    output: {
+        filename: 'static/js/[name].[chunkhash:8].js',
+        chunkFilename: 'static/js/[name].[chunkhash:8].js',
+    },
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
@@ -48,14 +48,6 @@ module.exports = webpackMerge(webpackBaseConfig, {
                 return !name.match(/\.map$/);
             },
         }),
-        new CompressionWebpackPlugin({
-            asset: '[path].gz[query]',
-            algorithm: 'gzip',
-            test: /.(js|css)$/,
-            threshold: 10240,
-            minRatio: 0.8,
-        }),
-        // new BundleAnalyzerPlugin(),
     ],
     optimization: {
         splitChunks: {
@@ -69,4 +61,4 @@ module.exports = webpackMerge(webpackBaseConfig, {
         },
         runtimeChunk: 'single',
     },
-});
+};

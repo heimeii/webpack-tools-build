@@ -1,51 +1,33 @@
-const os = require('os');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const Element = require('./base/Element');
 const config = require('../utils/config');
 const paths = require('../utils/paths');
-const vueLoaderConfig = require('../utils/vue-loader.conf');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
-module.exports = {
+module.exports = new Element({
+    context: paths.appPath,
     entry: {
-        main: paths.appEntry,
+        main: './src/main.js',
     },
     output: {
-        path: paths.appBuild,
+        path: paths.resolveApp('./build'),
         publicPath: '/',
-        filename: 'static/js/[name].[chunkhash:8].js',
-        chunkFilename: 'static/js/[name].[chunkhash:8].js',
         pathinfo: false,
     },
     resolve: {
         cacheWithContext: true,
-        extensions: ['.js', '.mjs', '.vue', '.json'],
+        extensions: ['.js', '.mjs', '.json'],
         alias: {
-            vue$: 'vue/dist/vue.esm.js',
-            '@': paths.resolveApp('src'),
+            '@': paths.resolveApp('./src'),
         },
-        modules: [paths.resolveApp('./node_modules'), paths.resolveOwn('./node_modules')],
+        modules: ['node_modules', paths.resolveOwn('./node_modules')],
     },
     resolveLoader: {
-        modules: [paths.resolveApp('./node_modules'), paths.resolveOwn('./node_modules')],
+        modules: ['node_modules', paths.resolveOwn('./node_modules')],
     },
     module: {
         strictExportPresence: true,
         rules: [
             { parser: { requireEnsure: false } },
-            {
-                test: /\.(js|vue)$/,
-                loader: 'eslint-loader',
-                enforce: 'pre',
-                include: [paths.resolveApp('src')],
-                options: {
-                    cache: true,
-                    cacheIdentifer: config.findEslintConfigFile,
-                    cwd: paths.appPath,
-                    baseConfig: require(require.resolve('../lib/.eslintrc')),
-                    formatter: require(require.resolve('eslint-friendly-formatter')),
-                    emitWarning: true,
-                },
-            },
             {
                 oneOf: [
                     {
@@ -70,35 +52,6 @@ module.exports = {
                         options: {
                             limit: 10000,
                             name: 'static/fonts/[name].[hash:8].[ext]',
-                        },
-                    },
-                ],
-            },
-            {
-                test: /\.vue$/,
-                use: [
-                    {
-                        loader: 'vue-loader',
-                        options: vueLoaderConfig,
-                    },
-                    (process.env.NODE_ENV === 'production') && {
-                        loader: 'thread-loader',
-                        options: {
-                            workers: os.cpus().length - 1,
-                        },
-                    },
-                ],
-            },
-            {
-                test: /\.tsx?$/,
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'ts-loader',
-                        options: {
-                            happyPackMode: true,
-                            transpileOnly: true,
-                            appendTsSuffixTo: [/\.vue$/],
                         },
                     },
                 ],
@@ -175,9 +128,6 @@ module.exports = {
             },
         ],
     },
-    plugins: [
-        new VueLoaderPlugin(),
-    ],
     node: {
         setImmediate: false,
         dgram: 'empty',
@@ -186,4 +136,4 @@ module.exports = {
         tls: 'empty',
         child_process: 'empty',
     },
-};
+});
