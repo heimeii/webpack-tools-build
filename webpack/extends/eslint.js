@@ -19,6 +19,25 @@ if (config.buildConfig.lang === 'vue') {
     });
 }
 
+if (config.buildConfig.lang === 'react') {
+    reg = '\.(j|t)sx?$';
+    config.mergeObject(baseConfig, {
+        extends: [
+            'plugin:react/recommended',
+        ],
+        parserOptions: {
+            ecmaFeatures: {
+                jsx: true,
+            },
+        },
+        settings: {
+            react: {
+                version: '16.4.2',
+            }
+        }
+    });
+}
+
 if (config.buildConfig.env === 'dev') {
     config.mergeObject(baseConfig, {
         rules: {
@@ -48,7 +67,7 @@ module.exports = {
                     cacheIdentifer: config.findEslintConfigFile,
                     cwd: paths.appPath,
                     baseConfig,
-                    formatter: require(require.resolve('eslint-friendly-formatter')),
+                    formatter: require('eslint-friendly-formatter'),
                     emitWarning: true,
                 },
             },

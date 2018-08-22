@@ -9,22 +9,6 @@ const typescriptExtends = {
                 exclude: /node_modules/,
                 use: [
                     {
-                        loader: 'babel-loader',
-                        options: {
-                            babelrc: false,
-                            compact: false,
-                            cacheDirectory: true,
-                            highlightCode: true,
-                            presets: [
-                                [require.resolve('@babel/preset-env'), { modules: false }],
-                            ],
-                            plugins: [
-                                require.resolve('@babel/plugin-syntax-dynamic-import'),
-                                require.resolve('@babel/plugin-transform-runtime'),
-                            ],
-                        }
-                    },
-                    {
                         loader: 'ts-loader',
                         options: {
                             happyPackMode: true,
@@ -39,8 +23,10 @@ const typescriptExtends = {
 };
 
 if (config.buildConfig.lang === 'vue') {
-    config.mergeObject(typescriptExtends.module.rules[0].use[0], {
+    typescriptExtends.module.rules[0].use.unshift({
+        loader: 'babel-loader',
         options: {
+            ...require('../../lib/.babelrc.js'),
             plugins: [
                 require.resolve('babel-plugin-transform-vue-jsx'),
             ],

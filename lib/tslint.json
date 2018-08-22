@@ -7,6 +7,19 @@
         "require": true
     },
     "rules": {
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "indent": [
+            true,
+            "spaces",
+            2
+        ],
+        "interface-name": false,
+        "ordered-imports": false,
+        "object-literal-sort-keys": false,
+        "no-debugger": false,
         "space-before-function-paren": false,
         "no-angle-bracket-type-assertion": false,
         "callable-types": false,
@@ -21,7 +34,6 @@
             "time",
             "timeEnd",
             "trace"
-        ],
-        "no-consecutive-blank-lines": false
+        ]
     }
 }

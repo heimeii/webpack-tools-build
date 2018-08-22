@@ -15,7 +15,7 @@ module.exports = {
                     {
                         loader: 'vue-loader',
                         options: {
-                            compiler: require(require.resolve('vue-template-compiler')),
+                            compiler: require('vue-template-compiler'),
                             transformToRequire: {
                                 video: ['src', 'poster'],
                                 source: 'src',

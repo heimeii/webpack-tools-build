@@ -62,17 +62,7 @@ module.exports = new Element({
                 exclude: /node_modules/,
                 loader: 'babel-loader',
                 options: {
-                    babelrc: false,
-                    compact: false,
-                    cacheDirectory: true,
-                    highlightCode: true,
-                    presets: [
-                        [require.resolve('@babel/preset-env'), { modules: false }],
-                    ],
-                    plugins: [
-                        require.resolve('@babel/plugin-syntax-dynamic-import'),
-                        require.resolve('@babel/plugin-transform-runtime'),
-                    ],
+                    ...require('../lib/.babelrc.js'),
                 },
             },
             {
@@ -119,7 +109,7 @@ module.exports = new Element({
                             {
                                 loader: 'postcss-loader',
                                 options: {
-                                    ...require(require.resolve('../lib/.postcssrc')),
+                                    ...require('../lib/.postcssrc'),
                                 },
                             },
                         ],
