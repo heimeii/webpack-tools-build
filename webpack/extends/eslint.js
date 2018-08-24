@@ -23,6 +23,8 @@ if (config.buildConfig.lang === 'react') {
     reg = '\.(j|t)sx?$';
     config.mergeObject(baseConfig, {
         extends: [
+            'prettier',
+            'prettier/react',
             'plugin:react/recommended',
         ],
         parserOptions: {
