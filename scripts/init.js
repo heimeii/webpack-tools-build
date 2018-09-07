@@ -16,32 +16,3 @@
 // ]).then((arr) => {
 //     console.log(arr);
 // });
-
-const Element = require('../model/Element');
-
-const config = new Element({
-    a: 123,
-    b: {
-        c: [
-            {
-                d: 1,
-            }
-        ],
-    }
-});
-
-config.merge({
-    a: 321,
-    b: {
-        c: [
-            {
-                e: 1,
-            }
-        ],
-        d: 'asd'
-    }
-});
-
-config.get('b').set('d', {});
-
-console.log(config.model);
