@@ -9,8 +9,6 @@ module.exports = {
     entry: {
         main: [
             './src/main.js',
-            require.resolve('webpack-hot-client/client'),
-            require.resolve('webpack/hot/dev-server'),
         ],
     },
     output: {
@@ -22,9 +20,6 @@ module.exports = {
         // open: true,
         port: 8080,
         host: '127.0.0.1',
-        hotClient: {
-            autoConfigure: false,
-        },
         logLevel: 'error',
     },
     watchOptions: {
@@ -37,7 +32,6 @@ module.exports = {
             },
         }),
         new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
         new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
         new HtmlWebpackPlugin({
             template: config.findTemplateFile || paths.resolveOwn('./index.html'),

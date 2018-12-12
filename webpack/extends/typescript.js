@@ -16,6 +16,7 @@ const typescriptExtends = {
                             configFile: paths.resolveApp('./tsconfig.json'),
                         },
                     },
+                    'react-hot-loader/webpack',
                 ],
             },
         ],
